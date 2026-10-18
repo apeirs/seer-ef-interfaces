@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seer Risk Pricing · Compare market estimates of risk</title>
+<meta name="description" content="Risk Pricing: compare market estimates of risk across DeFi protocols instead of interpreting a single yes-or-no price in isolation.">
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/ef.css">
+<style>
+.rhead{padding:36px 0 8px;display:grid;grid-template-columns:1.6fr 1fr;gap:40px;align-items:end}
+.rhead .lead{margin-top:14px}
+.ctl{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:26px 0 14px}
+.ctl .grp{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-width:0;max-width:100%}
+.scroll{overflow-x:auto}
+.layout{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:16px;align-items:start}
+.mx{width:100%;border-collapse:separate;border-spacing:0 6px}
+.mx th{font-size:11.5px;font-weight:500;color:var(--tx-3);text-align:center;padding:0 4px 6px;white-space:nowrap}
+.mx th:first-child{text-align:left;padding-left:14px}
+.mx td{background:var(--nest);padding:8px 2px;vertical-align:middle;text-align:center}
+.mx td:first-child{border-radius:14px 0 0 14px;text-align:left;padding-left:12px;min-width:160px}
+.mx td:last-child{border-radius:0 14px 14px 0;padding-right:10px}
+.mx tr.row{cursor:pointer}
+.mx tr.row:hover td{background:var(--nest-2)}
+.mx tr.sel td{background:var(--sec)}
+.who{display:flex;align-items:center;gap:12px}
+.who .thumb{width:36px;height:36px;border-radius:10px;font-size:12px}
+.who b{display:block;font-weight:600;font-size:14.5px;line-height:1.2}
+.who small{color:var(--tx-3);font-size:12px;white-space:nowrap}
+.cell{display:inline-grid;place-items:center;width:50px;height:40px;border-radius:10px;font-weight:600;font-size:13px;font-variant-numeric:tabular-nums}
+.cmp{width:22px;height:22px;border-radius:7px;background:var(--bg);display:inline-grid;place-items:center;color:transparent}
+[data-theme=light] .cmp{background:var(--card)}
+.cmp.on{background:var(--pri);color:#fff}
+.cmp svg{width:13px;height:13px}
+.el-r{font-weight:600;font-variant-numeric:tabular-nums}
+.ramp{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx-3)}
+.ramp i{display:block;width:150px;height:8px;border-radius:99px;background:linear-gradient(90deg,var(--nest-2),#7D33FF 55%,#F5B63A 80%,#FF4D5E)}
+.ladder{display:grid;gap:8px;margin-top:12px}
+.lad{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--nest)}
+.lad .q{font-size:14px;font-weight:500}.lad .q small{display:block;color:var(--tx-3);font-weight:400;font-size:12px}
+.lad .pv{font-weight:700;font-size:16px;min-width:46px;text-align:right}
+.ev{display:grid;gap:8px;margin-top:8px}
+.ev div{display:flex;gap:10px;font-size:13.5px;color:var(--tx-2);align-items:flex-start}
+.ev i{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none}
+.pf{display:grid;gap:10px;margin-top:12px}
+.pf label{display:grid;grid-template-columns:110px 1fr 78px;gap:10px;align-items:center;font-size:13.5px;color:var(--tx-2)}
+.pf input[type=range]{accent-color:#8B4EF7;width:100%}
+.pf output{text-align:right;font-weight:600;color:var(--tx);font-variant-numeric:tabular-nums}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.kp div{background:var(--nest);border-radius:14px;padding:12px 14px}
+.kp small{display:block;color:var(--tx-3);font-size:12px}.kp b{font-size:20px;letter-spacing:-.02em}
+.foot3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+@media (max-width:1100px){.rhead,.layout{grid-template-columns:minmax(0,1fr)}.foot3{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.scroll{margin:0 -18px;padding:0 18px}.mx{min-width:640px}.hide-m2{display:none}.pf label{grid-template-columns:90px 1fr 66px}}
+</style>
+</head>
+<body>
+<main>
+<div class="wrap">
+  <header class="rhead">
+    <div>
+      <div class="eyebrow" style="margin-bottom:14px">Risk Pricing</div>
+      <h1 class="h-display" style="font-size:clamp(36px,5vw,62px)">What the market thinks<br><span class="accent">could go wrong.</span></h1>
+      <p class="lead">Market estimates of risk, side by side across protocols. See the whole range of outcomes, from a scare to a total loss, not one yes-or-no price.</p>
+    </div>
+    <div class="card" style="padding:20px">
+      <div class="h3" style="margin-bottom:6px">How to read it</div>
+      <p class="muted" style="font-size:14px">Each cell is the market’s price for one question: <b style="color:var(--tx)">“Will this protocol lose at least this share of its value within the horizon?”</b> Reading across a row gives the shape of the risk. Reading down a column compares protocols on the same question.</p>
+    </div>
+  </header>
+
+  <div class="ctl">
+    <div class="grp">
+      <div class="seg" id="hz" role="group" aria-label="Horizon"><button data-h="30" aria-pressed="true">30 days</button><button data-h="90">90 days</button><button data-h="365">12 months</button></div>
+      <select class="sel" id="ev" aria-label="Event"><option>Funds lost to exploit or failure</option><option>Stablecoin depeg below $0.97</option><option>Withdrawals frozen over 7 days</option></select>
+    </div>
+    <div class="grp"><div class="tabs" id="cats" role="tablist" aria-label="Category"></div></div>
+  </div>
+
+  <div class="layout">
+    <section class="card">
+      <div class="meta" style="margin-bottom:10px"><b class="h3" style="color:var(--tx)">Loss estimates by protocol</b><span class="right ramp hide-m2">Lower<i></i>Higher</span></div>
+      <div class="scroll"><table class="mx" id="mx"></table></div>
+      <p class="dim" style="font-size:12.5px;margin-top:6px">Click a row to inspect it. Tick up to three to compare their curves. All numbers are illustrative.</p>
+    </section>
+
+    <aside style="display:grid;gap:16px">
+      <section class="card">
+        <div class="meta"><b class="h3" style="color:var(--tx)">Compare risk curves</b></div>
+        <p class="muted" style="font-size:13.5px;margin:4px 0 8px">Chance of losing at least this much, within the horizon.</p>
+        <div id="curve"></div>
+        <div class="legend" id="curve-l" style="margin-top:10px"></div>
+      </section>
+      <section class="card" id="detail"></section>
+    </aside>
+  </div>
+
+  <div class="foot3">
+    <section class="card">
+      <div class="eyebrow" style="margin-bottom:10px">Your exposure</div>
+      <div class="h3">What the market implies for your positions</div>
+      <div class="pf" id="pf"></div>
+      <div class="kp"><div><small>Expected loss, <span id="hz-l">30 days</span></small><b class="num" id="k-el">$0</b></div><div><small>1-in-10 bad case</small><b class="num" id="k-bad">$0</b></div></div>
+    </section>
+    <section class="card">
+      <div class="eyebrow" style="margin-bottom:10px">Why a ladder</div>
+      <div class="h3">One price hides the shape of risk</div>
+      <p class="muted" style="font-size:14px;margin-top:10px">Two protocols can both show “12% chance of a hack”. One may mean a small, recoverable loss. The other, losing everything. Pricing five severities per protocol shows which is which.</p>
+    </section>
+    <section class="card">
+      <div class="eyebrow" style="margin-bottom:10px">What moved the market</div>
+      <div class="ev" id="events"></div>
+    </section>
+  </div>
+</div>
+</main>
+<script src="assets/ef.js"></script>
+<script>
+EF.shell('risk');
+const {$, $$, I, el, usd, pct, cents, walk, rng, slip, lineChart, spark, tile} = EF;
+
+/* illustrative protocols (fictional names) */
+const TH = [1, 5, 25, 50, 100]; /* loss thresholds, % of value */
+const PR = [
+ ['Cobalt Lend','Lending',8.2e9,.044,0],['Meridian Swap','DEX',3.9e9,.061,1],['Halo Staking','Liquid staking',14.6e9,.049,2],['Kite Stable','Stablecoin',6.1e9,.115,3],
+ ['Orbit Bridge','Bridge',1.8e9,.286,4],['Fennel Yield','Yield',0.9e9,.208,5],['Juno Perps','DEX',1.2e9,.174,0],['Lumen Vault','Yield',2.4e9,.092,1],
+ ['Tern Lend','Lending',4.4e9,.081,2],['Pavo Stable','Stablecoin',9.3e9,.058,3],['Rook Bridge','Bridge',0.7e9,.344,4],['Isle Swap','DEX',2.1e9,.077,5]
+];
+const R = rng(21);
+const P = PR.map(([name, cat, tvl, p1, c], i) => { const r = [1, .52 + R() * .14, 0, 0, 0]; r[2] = r[1] * (.46 + R() * .12); r[3] = r[2] * (.5 + R() * .12); r[4] = r[3] * (.42 + R() * .14); return {name, cat, tvl, c, p30: r.map(k => Math.min(.95, p1 * .34 * k)), tr: walk(40 + i, 24, p1 * .34, .006, .004, .3, .05, p1 * .34), liq: Math.round((.05 + R() * .3) * 1e6), color: ['#8B4EF7','#4DA3FF','#2FD08A','#F5B63A','#FF6B7A','#2EC5CE'][i % 6]}; });
+let H = 30, cat = 'All', sel = 4, cmp = [4, 0, 3];
+const probs = (p, h) => p.p30.map(x => 1 - Math.pow(1 - x, Math.pow(h / 30, .7)));
+const expLoss = (p, h) => { const q = probs(p, h); const mids = [3, 12, 35, 75, 100]; let e = 0; for (let k = 0; k < 5; k++) e += (q[k] - (q[k + 1] || 0)) * mids[k]; return e / 100; };
+const q90 = (p, h) => { const q = probs(p, h); for (let k = 0; k < 5; k++) if (q[k] < .1) { if (k === 0) return 0; const a = Math.log(TH[k - 1]), b = Math.log(TH[k]); const t = (Math.log(.1) - Math.log(q[k - 1])) / (Math.log(q[k]) - Math.log(q[k - 1])); return Math.exp(a + (b - a) * t) / 100; } return 1; };
+const heat = v => { /* violet ramp then amber/red for high odds */ const t = Math.min(1, Math.sqrt(v / .4)); const stops = [[38, 38, 44], [125, 51, 255], [245, 182, 58], [255, 77, 94]]; const x = t * 3, i = Math.min(2, Math.floor(x)), f = x - i; const c = stops[i].map((s, j) => Math.round(s + (stops[i + 1][j] - s) * f)); const lum = (c[0] * 299 + c[1] * 587 + c[2] * 114) / 1000; const light = document.documentElement.dataset.theme === 'light'; const bg = light && t < .08 ? 'rgb(233,233,238)' : `rgb(${c})`; return `background:${bg};color:${t < .06 ? 'var(--tx-3)' : lum > 150 ? '#1A1A1E' : '#fff'}`; };
+const CATS = ['All', 'Lending', 'DEX', 'Liquid staking', 'Stablecoin', 'Bridge', 'Yield'];
+CATS.forEach(c => { const b = el('button', {class: 'tab', role: 'tab'}, c); b.setAttribute('aria-selected', c === cat); b.onclick = () => { cat = c; $$('#cats .tab').forEach(x => x.setAttribute('aria-selected', x === b)); drawMx(); }; $('#cats').append(b); });
+$$('#hz button').forEach(b => b.onclick = () => { H = +b.dataset.h; $$('#hz button').forEach(x => x.setAttribute('aria-pressed', x === b)); $('#hz-l').textContent = H === 365 ? '12 months' : H + ' days'; drawAll(); });
+$('#ev').onchange = () => { EF.toast('Illustrative: this concept shows one event type'); };
+
+function drawMx() {
+  const idx = P.map((p, i) => i).filter(i => cat === 'All' || P[i].cat === cat).sort((a, b) => expLoss(P[b], H) - expLoss(P[a], H));
+  $('#mx').innerHTML = `<thead><tr><th>Protocol</th>${TH.map(t => `<th>${t === 100 ? 'Total loss' : '≥ ' + t + '% lost'}</th>`).join('')}<th>Expected loss</th><th class="hide-m2">7 days</th><th>Compare</th></tr></thead><tbody>` + idx.map(i => { const p = P[i], q = probs(p, H), on = cmp.includes(i); return `<tr class="row ${sel === i ? 'sel' : ''}" data-i="${i}"><td><div class="who">${tile(p.name.split(' ').map(w => w[0]).join(''), p.c, 36)}<div><b>${p.name}</b><small>${p.cat} · ${EF.short(p.tvl)}</small></div></div></td>${q.map(v => `<td><span class="cell" style="${heat(v)}">${v < .005 ? '<1%' : (v * 100).toFixed(v < .1 ? 1 : 0) + '%'}</span></td>`).join('')}<td><span class="el-r">${(expLoss(p, H) * 100).toFixed(1)}%</span></td><td class="hide-m2">${spark(p.tr.slice(-12), p.color, 64, 24)}</td><td><span class="cmp ${on ? 'on' : ''}" data-c="${i}" role="checkbox" aria-checked="${on}" tabindex="0" aria-label="Compare ${p.name}">${I.check}</span></td></tr>`; }).join('') + '</tbody>';
+  $$('#mx tr.row').forEach(r => r.onclick = e => { const i = +r.dataset.i; if (e.target.closest('.cmp')) { cmp = cmp.includes(i) ? cmp.filter(x => x !== i) : [...cmp.slice(-2), i]; drawCurve(); drawMx(); return; } sel = i; drawMx(); drawDetail(); });
+  $$('#mx .cmp').forEach(c => c.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.click(); } });
+}
+function drawCurve() {
+  const pts = []; for (let x = 0; x <= 40; x++) pts.push(Math.exp(Math.log(1) + (Math.log(100) - Math.log(1)) * x / 40));
+  const ser = cmp.map((i, k) => { const p = P[i], q = probs(p, H); const ys = pts.map(v => { let k2 = 0; while (k2 < 4 && TH[k2 + 1] <= v) k2++; if (v >= 100) return q[4]; const a = TH[k2], b = TH[k2 + 1], t = (Math.log(v) - Math.log(a)) / (Math.log(b) - Math.log(a)); return Math.exp(Math.log(q[k2]) + (Math.log(q[k2 + 1]) - Math.log(q[k2])) * t); }); return {name: p.name, color: ['#8B4EF7', '#4DA3FF', '#F5B63A'][k], data: ys, w: 2.6}; });
+  const mx = Math.max(.1, ...ser.flatMap(s => s.data)); const top = Math.max(.04, Math.ceil(mx / .04) * .04);
+  const lbl = [[0, '1%'], [10, '3%'], [20, '10%'], [30, '30%'], [40, '100%']]; lbl.fmt = i => '≥ ' + (pts[i] < 10 ? pts[i].toFixed(1) : Math.round(pts[i])) + '% lost';
+  if (!ser.length) { $('#curve').innerHTML = '<div class="dim" style="padding:40px 0;text-align:center">Tick a protocol to compare.</div>'; $('#curve-l').innerHTML = ''; return; }
+  lineChart($('#curve'), {series: ser, xLabels: lbl, yMin: 0, yMax: top, yFmt: v => Math.round(v * 100) + '%', H: 250, ticks: 4, area: true});
+  $('#curve-l').innerHTML = ser.map(s => `<span><i style="background:${s.color}"></i>${s.name}</span>`).join('');
+}
+const EVT = [['Audit report published, no critical findings', '#2FD08A'], ['Oracle deviation on a major pair, 40 minutes', '#F5B63A'], ['Governance proposal raises borrow caps', '#4DA3FF'], ['Large withdrawal from the bridge multisig', '#FF6B7A'], ['Bug bounty payout raised to $2M', '#2FD08A']];
+function drawDetail() {
+  const p = P[sel], q = probs(p, H);
+  const names = ['at least 1%', 'at least 5%', 'at least 25%', 'at least 50%', 'everything'];
+  $('#detail').innerHTML = `<div class="meta"><div class="who">${tile(p.name.split(' ').map(w => w[0]).join(''), p.c, 40)}<div><b style="color:var(--tx);font-size:16px">${p.name}</b><br><small>${p.cat} · ${EF.short(p.tvl)} TVL</small></div></div><span class="right chip">${H === 365 ? '12 months' : H + ' days'}</span></div>
+   <div class="kp"><div><small>Expected loss</small><b class="num">${(expLoss(p, H) * 100).toFixed(1)}%</b></div><div><small>1-in-10 bad case</small><b class="num">${q90(p, H) < .01 ? '<1' : (q90(p, H) * 100).toFixed(0)}%</b></div></div>
+   <div class="ladder">${q.map((v, k) => `<div class="lad"><div class="q">Loses ${names[k]}<small>${EF.short(p.liq / 5 * (1 + k * .3))} depth</small></div><span class="pv num">${v < .005 ? '<1¢' : cents(v)}</span><button class="btn sm sec" data-k="${k}">Trade</button></div>`).join('')}</div>`;
+  $$('#detail [data-k]').forEach(b => b.onclick = () => { const k = +b.dataset.k; slip({title: `Will ${p.name} lose ${names[k]} of its value within ${H === 365 ? '12 months' : H + ' days'}?`, outcome: names[k], tag: 'Yes', side: 'yes', price: Math.max(.02, Math.min(.98, q[k])), note: 'Illustrative estimate, not advice'}); });
+}
+/* exposure */
+const EXP = [[0, 25000], [3, 40000], [4, 5000], [2, 60000]];
+function drawPf() {
+  $('#pf').innerHTML = EXP.map(([i, a], k) => `<label>${P[i].name}<input type="range" min="0" max="100000" step="1000" value="${a}" data-k="${k}"><output>${usd(a)}</output></label>`).join('');
+  $$('#pf input').forEach(r => r.oninput = () => { EXP[+r.dataset.k][1] = +r.value; r.nextElementSibling.textContent = usd(+r.value); calc(); });
+  calc();
+}
+function calc() { const el1 = EXP.reduce((s, [i, a]) => s + a * expLoss(P[i], H), 0), bad = Math.sqrt(EXP.reduce((s, [i, a]) => s + (a * q90(P[i], H)) ** 2, 0)); $('#k-el').textContent = usd(Math.round(el1)); $('#k-bad').textContent = usd(Math.round(bad)); }
+$('#events').innerHTML = EVT.map(([t, c], i) => `<div><i style="background:${c}"></i><span><b style="color:var(--tx);font-weight:600">${P[[0, 4, 2, 10, 7][i]].name}:</b> ${t}</span></div>`).join('');
+function drawAll() { drawMx(); drawCurve(); drawDetail(); calc(); }
+drawAll(); drawPf();
+document.addEventListener('themechange', drawAll);
+</script>
+</body>
+</html>

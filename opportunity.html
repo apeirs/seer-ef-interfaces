@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seer Opportunity Markets · Back what you think gets chosen</title>
+<meta name="description" content="Opportunity Markets: traders forecast which submissions are likely to be selected, giving reviewers another signal while leaving the final selection to them.">
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/ef.css">
+<style>
+.ohead{padding:36px 0 8px;display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end}
+.ohead .lead{margin-top:14px}
+.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ph{background:var(--nest);border-radius:14px;padding:12px 14px;position:relative}
+.ph small{display:block;color:var(--tx-3);font-size:12px}
+.ph b{font-size:14px;font-weight:600}
+.ph.done{background:var(--sec)}.ph.done b{color:var(--sec-tx)}
+.ph.now{background:var(--pri);color:#fff}.ph.now small{color:rgba(255,255,255,.75)}
+.mhead{margin:26px 0 16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.mhead .stat .v{font-size:26px}
+.sumbar{display:flex;height:34px;border-radius:12px;overflow:hidden;gap:2px;margin-top:14px}
+.sumbar i{display:block;height:100%;min-width:3px;transition:flex .3s}
+.sumbar i:hover{filter:brightness(1.2)}
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:16px;align-items:start}
+.ctrls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin-bottom:12px}
+.sub{display:grid;grid-template-columns:34px minmax(0,1.3fr) minmax(0,1.2fr) 118px 112px;gap:14px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--nest);margin-bottom:6px}
+.sub:hover{background:var(--nest-2)}
+.sub .rk{width:30px;height:30px;border-radius:10px;background:var(--bg);display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--tx-2)}
+[data-theme=light] .sub .rk{background:var(--card)}
+.sub.top .rk{background:var(--sec);color:var(--sec-tx)}
+.sub .t{min-width:0}
+.sub .t b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub .t small{color:var(--tx-3);font-size:12.5px}
+.sub .pb{display:grid;gap:6px}
+.sub .pb .num{font-weight:600;font-size:15px}
+.sub .team{font-size:12.5px;color:var(--tx-3);text-align:left}
+.sub .team b{display:block;color:var(--tx-2);font-weight:600;font-size:13px}
+.sub .team .pend{border:1px dashed var(--tx-3);border-radius:8px;padding:2px 8px;display:inline-block;color:var(--tx-3);font-size:12px}
+.sub .buy{height:36px;width:100%}
+.colh{display:grid;grid-template-columns:34px minmax(0,1.3fr) minmax(0,1.2fr) 118px 112px;gap:14px;padding:0 14px 6px;font-size:12px;color:var(--tx-3)}
+.rules{display:grid;gap:10px;margin-top:6px}
+.rule{display:flex;gap:12px;align-items:flex-start}
+.rule .n{width:28px;height:28px;border-radius:10px;background:var(--sec);color:var(--sec-tx);font-weight:700;display:grid;place-items:center;flex:none;font-size:13px}
+.rule p{color:var(--tx-2);font-size:14px}.rule b{color:var(--tx);display:block;font-weight:600;font-size:15px}
+.credit{display:inline-flex;align-items:center;gap:5px;color:var(--warn);font-size:12px;font-weight:600}
+.past{display:grid;gap:10px;margin-top:10px}
+.pastc{background:var(--nest);border-radius:14px;padding:14px}
+.note-b{display:flex;gap:10px;padding:14px 16px;border-radius:14px;background:var(--sec);color:var(--sec-tx);font-size:14px;margin-top:14px}
+.note-b svg{width:18px;height:18px;flex:none;margin-top:1px}
+@media (max-width:1100px){.ohead,.layout{grid-template-columns:minmax(0,1fr)}.mhead{grid-template-columns:repeat(2,minmax(0,1fr))}.phases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){.sub,.colh{grid-template-columns:30px minmax(0,1fr) 96px}.sub .pb{grid-column:2/3;grid-row:2}.sub .team{display:none}.colh{display:none}.sub .rk{grid-row:1/3;align-self:start}.sub .buy{grid-column:3;grid-row:1/3;align-self:center}}
+</style>
+</head>
+<body>
+<main>
+<div class="wrap">
+  <header class="ohead">
+    <div>
+      <div class="eyebrow" style="margin-bottom:14px">Opportunity Markets</div>
+      <h1 class="h-display" style="font-size:clamp(38px,5.4vw,66px)">Back what you think<br><span class="accent">gets chosen.</span></h1>
+      <p class="lead">Every submission is an outcome in one market. Buying shares is how the community says which ones it expects reviewers to select. The price is a signal for the team. The team still picks.</p>
+    </div>
+    <div class="card" style="padding:18px">
+      <div class="h3" style="margin-bottom:12px">Grants Round 4 · timeline</div>
+      <div class="phases"><div class="ph done"><small>Phase 1</small><b>Submissions</b></div><div class="ph now"><small>Phase 2 · now</small><b>Trading</b></div><div class="ph"><small>Phase 3</small><b>Team vote</b></div><div class="ph"><small>Phase 4</small><b>Resolution</b></div></div>
+      <p class="muted" style="font-size:14px;margin-top:12px">Trading closes in <b class="num" style="color:var(--tx)">4d 7h</b>. After the team vote, the chosen submission resolves to $1 a share and every other one to $0.</p>
+    </div>
+  </header>
+
+  <div class="mhead" id="mhead"></div>
+
+  <section class="card" style="margin-bottom:16px">
+    <div class="meta"><b class="h3" style="color:var(--tx)">All prices add up to $1</b><span class="right muted" style="font-size:13px">Share of the market’s expectation, top 10 shown</span></div>
+    <div class="sumbar" id="sumbar" role="img" aria-label="Distribution of prices"></div>
+    <div class="legend" id="sumlg" style="margin-top:12px"></div>
+  </section>
+
+  <div class="layout">
+    <section class="card">
+      <div class="ctrls">
+        <label class="pillsearch" style="height:44px;flex:1;min-width:200px"><span class="sr">Search submissions</span><span id="si"></span><input id="q" placeholder="Search submissions…" autocomplete="off" style="font-size:14px"></label>
+        <div class="seg" id="sort" role="group" aria-label="Sort"><button data-s="p" aria-pressed="true">Price</button><button data-s="m">Movers</button><button data-s="n">Newest</button></div>
+      </div>
+      <div class="colh"><span></span><span>Submission</span><span>Market price</span><span>Team ranking</span><span></span></div>
+      <div id="list"></div>
+    </section>
+
+    <aside style="display:grid;gap:16px">
+      <section class="card">
+        <div class="h3">How selection works</div>
+        <div class="rules">
+          <div class="rule"><span class="n">1</span><div><b>Price is a vote of capital.</b><p>Buying a submission lifts its price. There is no separate ballot.</p></div></div>
+          <div class="rule"><span class="n">2</span><div><b>The team chooses.</b><p>Reviewers read the market and decide. A price is a signal, never a verdict.</p></div></div>
+          <div class="rule"><span class="n">3</span><div><b>Resolution is clean.</b><p>The pick pays $1 a share, all others $0. Last-minute buying can’t change who wins, only what you hold.</p></div></div>
+          <div class="rule"><span class="n">4</span><div><b>Rewards for conviction.</b><p>The top five by final price earn 100 Opportunity credits each, even if not selected.</p></div></div>
+        </div>
+        <div class="note-b"><span id="ni"></span><span>After the vote the team publishes a note, especially where its choice and the highest price diverge.</span></div>
+      </section>
+      <section class="card">
+        <div class="h3">Your positions</div>
+        <p class="muted" style="font-size:14px;margin:8px 0 14px" id="pos">No positions yet. Pick a submission and buy shares to see them here.</p>
+        <button class="btn ghost" style="width:100%" onclick="EF.toast('Wallet connection is simulated in this concept')">Connect wallet</button>
+      </section>
+      <section class="card">
+        <div class="h3">Closed markets</div>
+        <div class="past">
+          <div class="pastc"><div class="meta"><span class="chip up">✓ Resolved</span><span class="right">Jul 2026</span></div><b style="display:block;margin:8px 0 2px;font-weight:600">Rebrand contest, part 1</b><span class="muted" style="font-size:13.5px">Team selected the Electric Foundation identity. Price leader at close: 3rd of 41.</span></div>
+          <div class="pastc"><div class="meta"><span class="chip up">✓ Resolved</span><span class="right">Sep 2026</span></div><b style="display:block;margin:8px 0 2px;font-weight:600">Grants Round 3</b><span class="muted" style="font-size:13.5px">Team selected 9 of 31. Prices ranked 7 of them in the top 10.</span></div>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+</main>
+<script src="assets/ef.js"></script>
+<script>
+EF.shell('opportunity');
+const {$, $$, I, el, usd, short, walk, rng, PAL, slip, cents} = EF;
+$('#si').innerHTML = I.search; $('#ni').innerHTML = I.info;
+
+/* illustrative submissions (24) */
+const NAMES = [['Lantern RPC','Open, rate-limit-free public RPC'],['Tessera Wallet','Wallet with safe-by-default approvals'],['Quillon Prover','Fast zk proving library'],['Halcyon Indexer','Streaming chain indexer'],['Meridian Oracle','Low-latency price feeds'],['Orrery Bridge','Messaging between rollups'],['Fathom Ledger','Open accounting for DAOs'],['Cinder SDK','Typed SDK for contracts'],['Vesper Relay','Private transaction relay'],['Argent Registry','Onchain contributor registry'],['Nimbus Router','Intent routing for swaps'],['Kestrel Vault','Audit-friendly vault kit'],['Harbor Docs','Docs search for protocols'],['Sable Alerts','Onchain monitoring alerts'],['Ptolemy Maps','Dependency maps for repos'],['Ember Faucet','Testnet faucet network'],['Willow Grants','Retro funding toolkit'],['Corvid Agents','Agent templates for DAOs'],['Basalt Node','Light client for phones'],['Marlin Audit','Reproducible audit reports'],['Tallow Tools','Fuzzing harness library'],['Larkspur ID','Pseudonymous reputation'],['Quartz Labs','Education: Solidity bootcamp'],['Saffron Data','Open datasets for research']];
+const R = rng(23);
+const raw = NAMES.map((n, i) => Math.exp((R() * 4.2) - 1.0 - i * .08));
+const tot = raw.reduce((a, b) => a + b, 0);
+const S = NAMES.map((n, i) => ({name: n[0], desc: n[1], p: raw[i] / tot, d: (R() - .45) * .02, age: Math.floor(R() * 20) + 1, by: '@' + ['mira','oss_dev','kellan','lumen','bytewright','north','sigrid','arlo','vega','teo'][i % 10] + (i > 9 ? i : ''), traders: Math.floor(raw[i] / tot * 900 + 12), color: PAL[i % PAL.length]}));
+S.sort((a, b) => b.p - a.p); S.forEach((s, i) => s.rank = i + 1);
+
+$('#mhead').innerHTML = [['Submissions', '24'], ['Volume', '$318K'], ['Traders', '1,046'], ['Credit pool', '500 credits', 'Top 5 earn 100 each']].map(([k, v, d]) => `<div class="stat"><div class="k">${k}</div><div class="v num">${v}</div>${d ? `<div class="d">${d}</div>` : ''}</div>`).join('');
+const topS = S.slice(0, 9); const rest = 1 - topS.reduce((a, s) => a + s.p, 0);
+$('#sumbar').innerHTML = topS.map(s => `<i style="flex:${s.p};background:${s.color}" title="${s.name} ${(s.p * 100).toFixed(1)}%"></i>`).join('') + `<i style="flex:${rest};background:var(--nest-2)" title="Other ${(rest * 100).toFixed(1)}%"></i>`;
+$('#sumlg').innerHTML = topS.slice(0, 6).map(s => `<span><i style="background:${s.color}"></i>${s.name} <b class="num" style="color:var(--tx)">${(s.p * 100).toFixed(1)}%</b></span>`).join('') + `<span><i style="background:var(--nest-2)"></i>Other <b class="num" style="color:var(--tx)">${(rest * 100 + topS.slice(6).reduce((a, s) => a + s.p, 0) * 0).toFixed(1)}%</b></span>`;
+
+let sort = 'p', q = '', all = false; const held = {};
+function draw() {
+  let l = S.filter(s => (s.name + s.desc + s.by).toLowerCase().includes(q));
+  l.sort((a, b) => sort === 'p' ? b.p - a.p : sort === 'm' ? b.d - a.d : a.age - b.age);
+  const mx = Math.max(...S.map(s => s.p));
+  const total = l.length; if (!all && !q) l = l.slice(0, 10);
+  $('#list').innerHTML = l.map(s => `<div class="sub ${s.rank <= 5 ? 'top' : ''}"><span class="rk">${s.rank}</span><div class="t"><b>${s.name}</b><small>${s.desc} · ${s.by}</small></div><div class="pb"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="num">${cents(s.p)} <span class="muted" style="font-weight:400;font-size:13px">${(s.p * 100).toFixed(1)}%</span></span><span class="num" style="font-size:12.5px;color:var(--${s.d >= 0 ? 'up' : 'down'})">${s.d >= 0 ? '▲' : '▼'} ${Math.abs(s.d * 100).toFixed(1)}</span></div><div class="bar"><i style="width:${(s.p / mx) * 100}%;background:${s.color}"></i></div></div><div class="team"><span class="pend">Not decided</span>${s.rank <= 5 ? '<span class="credit" style="display:flex;margin-top:4px">★ credits if top 5</span>' : ''}</div><button class="btn sm buy" data-n="${s.name}">${held[s.name] ? 'Held · ' + usd(held[s.name]) : 'Buy shares'}</button></div>`).join('') || '<div class="dim" style="padding:30px;text-align:center">No submission matches.</div>';
+  if (!q && total > 10) $('#list').insertAdjacentHTML('beforeend', `<button class="btn ghost" id="more" style="width:100%;margin-top:6px;background:var(--nest)">${all ? 'Show top 10' : 'Show all ' + total + ' submissions'}</button>`), $('#more').onclick = () => { all = !all; draw(); };
+  $$('.buy').forEach(b => b.onclick = () => { const s = S.find(x => x.name === b.dataset.n); slip({title: `Will the team select “${s.name}”?`, outcome: s.name, side: 'yes', tag: 'Selected', price: Math.max(.02, s.p), note: 'Pays $1 a share only if the team selects it'}); });
+}
+$('#q').oninput = e => { q = e.target.value.toLowerCase(); draw(); };
+$$('#sort button').forEach(b => b.onclick = () => { sort = b.dataset.s; $$('#sort button').forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); });
+draw();
+</script>
+</body>
+</html>

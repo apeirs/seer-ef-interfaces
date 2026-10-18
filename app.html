@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seer App · Explore every market</title>
+<meta name="description" content="The general explorer for all Seer markets: find and trade across market types.">
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/ef.css">
+<style>
+.explore-top{padding:28px 0 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}.filters .seg{overflow-x:auto;max-width:100%;scrollbar-width:none}.filters .seg button{white-space:nowrap}.filters .grp{min-width:0;max-width:100%}
+.row-controls{display:flex;gap:12px;align-items:center}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.filters .grp{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stats-row{margin:20px 0 8px}
+.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:16px}
+.empty{padding:60px 20px;text-align:center;color:var(--tx-3)}
+.feeds{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-top:40px}
+.feed-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;background:var(--nest);margin-bottom:6px;font-size:14px}
+.feed-row .t{color:var(--tx-3);font-size:12px}
+.addr{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--tx-2)}
+.drawer-back{position:fixed;inset:0;background:rgba(8,8,12,.55);backdrop-filter:blur(4px);z-index:90;display:none}
+.drawer-back.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);background:var(--bg);z-index:91;overflow:auto;padding:22px;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow)}
+.drawer.open{transform:none}
+.drawer h2{font-size:24px;line-height:1.2;letter-spacing:-.025em;margin:12px 0 6px}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
+.kv div{background:var(--card);border-radius:14px;padding:12px 14px}
+.kv small{display:block;color:var(--tx-3);font-size:12px;margin-bottom:2px}
+.kv b{font-weight:600;font-size:15px}
+.dtbl{margin-top:8px}
+@media (max-width:1280px){.mgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:980px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.feeds{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.mgrid{grid-template-columns:minmax(0,1fr)}.row-controls .btn{display:none}.kv{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<main>
+  <div class="wrap">
+    <section class="explore-top">
+      <div class="row-controls">
+        <label class="pillsearch"><span class="sr">Search markets</span><span data-i="search"></span><input id="q" type="search" placeholder="Search markets…" autocomplete="off"></label>
+        <a class="btn lg hide-m" href="#" onclick="EF.toast('Market creation is simulated in this concept');return false">Create market</a>
+      </div>
+      <div class="tabs" id="cats" role="tablist" aria-label="Categories"></div>
+      <div class="filters">
+        <div class="grp">
+          <div class="seg" id="types" role="group" aria-label="Market type"></div>
+        </div>
+        <div class="grp">
+          <select class="sel" id="chain" aria-label="Chain"><option value="">All chains</option><option>Gnosis</option><option>Ethereum</option><option>Optimism</option></select>
+          <select class="sel" id="sort" aria-label="Sort"><option value="vol">Volume</option><option value="liq">Liquidity</option><option value="new">Newest</option><option value="end">Ending soon</option></select>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid g4 stats-row" id="stats"></div>
+    <div class="meta" style="margin-top:14px"><span id="count"></span><i></i><span>Every market, whatever its type, in one list.</span></div>
+    <div class="mgrid" id="grid"></div>
+
+    <section class="feeds">
+      <div class="card"><div class="meta" style="margin-bottom:12px"><b class="h3" style="color:var(--tx)">Latest trades</b><span class="right"><span class="chip live"><span class="dot"></span>Live</span></span></div><div id="trades"></div></div>
+      <div class="card"><div class="meta" style="margin-bottom:12px"><b class="h3" style="color:var(--tx)">New markets</b></div><div id="newm"></div></div>
+    </section>
+  </div>
+</main>
+
+<div class="drawer-back" id="dback"></div>
+<aside class="drawer" id="drawer" aria-label="Market details" aria-hidden="true"></aside>
+
+<script src="assets/ef.js"></script>
+<script>
+EF.shell('app');
+const {$, $$, I, el, usd, short, pct, cents, walk, rng, PAL, slip, lineChart, tile} = EF;
+$$('[data-i=search]').forEach(e => e.innerHTML = I.search);
+
+/* illustrative data: every value is made up */
+const M = [
+ {id:'0x4f2a…c91e', q:'US announces end of Iranian blockade by…?', cat:'Politics', type:'Scalar', chain:'Ethereum', vol:170e3, liq:38e3, end:9, kind:'rows', ver:1, o:[['July 24',.12],['Aug 15',.36]], tl:0},
+ {id:'0x91be…07d2', q:'World Cup: who lifts the trophy?', cat:'Sports', type:'Categorical', chain:'Gnosis', vol:18e6, liq:1.2e6, end:61, kind:'btns', ver:1, o:[['Argentina',.35],['Draw',.30],['England',.35]], tl:1, live:0},
+ {id:'0x1c77…a3f0', q:'BTC up or down in 5 minutes', cat:'Crypto', type:'Binary', chain:'Gnosis', vol:41e3, liq:12e3, end:0, kind:'updown', ver:1, o:[['Up',.52],['Down',.48]], tl:2, live:1},
+ {id:'0xa009…5b4c', q:'World Cup: Golden Boot winner', cat:'Sports', type:'Categorical', chain:'Gnosis', vol:60e6, liq:2.4e6, end:61, kind:'rows', ver:1, o:[['Player A',.35],['Player B',.35]], tl:3},
+ {id:'0x7d31…e8aa', q:'Fed decision in July?', cat:'Business', type:'Categorical', chain:'Ethereum', vol:64e6, liq:3.1e6, end:12, kind:'rows', ver:1, o:[['No change',.95],['+25 bps',.04]], tl:4},
+ {id:'0x3b6c…1d09', q:'Ballon d’Or winner 2026', cat:'Sports', type:'Categorical', chain:'Gnosis', vol:7e6, liq:610e3, end:130, kind:'rows', ver:1, o:[['Player C',.46],['Player D',.24]], tl:5},
+ {id:'0xe412…92bb', q:'Strait of Hormuz traffic returns to normal by August 31?', cat:'Politics', type:'Binary', chain:'Ethereum', vol:894e3, liq:96e3, end:44, kind:'yesno', ver:1, o:[['Yes',.58],['No',.42]], tl:0},
+ {id:'0x58a0…ff31', q:'Elon-style tweet count, July 10 – 17', cat:'Pop Culture', type:'Multi-scalar', chain:'Gnosis', vol:2e6, liq:210e3, end:5, kind:'rows', ver:0, o:[['140–159',.35],['160–179',.33]], tl:2},
+ {id:'0x6e19…3c70', q:'Democratic nominee 2028', cat:'Elections', type:'Categorical', chain:'Ethereum', vol:1e9, liq:41e6, end:900, kind:'rows', ver:1, o:[['Cand. X',.20],['Cand. Y',.14]], tl:1},
+ {id:'0xd205…b6e1', q:'F1 drivers’ champion', cat:'Sports', type:'Categorical', chain:'Gnosis', vol:196e6, liq:8e6, end:160, kind:'rows', ver:1, o:[['Driver A',.59],['Driver B',.19]], tl:4},
+ {id:'0x20f4…8a5d', q:'Clarity Act signed into law in 2026?', cat:'Politics', type:'Binary', chain:'Ethereum', vol:400e3, liq:64e3, end:75, kind:'yesno', ver:1, o:[['Yes',.69],['No',.37]], tl:5, hot:1},
+ {id:'0xb7c8…0e12', q:'ETH above $3,000 on Dec 31?', cat:'Crypto', type:'Binary', chain:'Gnosis', vol:3.2e6, liq:410e3, end:75, kind:'yesno', ver:1, o:[['Yes',.31],['No',.69]], tl:2},
+ {id:'0x0a3f…66cd', q:'Treasury DAO: pass milestone 4 payment?', cat:'Governance', type:'Conditional', chain:'Gnosis', vol:120e3, liq:55e3, end:6, kind:'cond', ver:1, o:[['If passes',.64],['If fails',.51]], tl:3},
+ {id:'0xc1d6…4e78', q:'Protocol exploit above $10M in Q4?', cat:'DeFi', type:'Binary', chain:'Ethereum', vol:1.4e6, liq:190e3, end:74, kind:'yesno', ver:1, o:[['Yes',.22],['No',.78]], tl:0},
+ {id:'0x92ea…d1b3', q:'Stablecoin supply above $400B by year end?', cat:'DeFi', type:'Binary', chain:'Ethereum', vol:870e3, liq:120e3, end:75, kind:'yesno', ver:1, o:[['Yes',.47],['No',.53]], tl:1},
+ {id:'0x8e04…fa29', q:'Round 4 grants: which repositories get funded?', cat:'Governance', type:'Multi-scalar', chain:'Optimism', vol:290e3, liq:930e3, end:21, kind:'rows', ver:1, o:[['repo-alpha',.31],['repo-beta',.22]], tl:4},
+ {id:'0x45b2…a870', q:'Hurricane makes US landfall before Oct 31?', cat:'Weather', type:'Binary', chain:'Gnosis', vol:310e3, liq:44e3, end:14, kind:'yesno', ver:0, o:[['Yes',.27],['No',.73]], tl:5},
+ {id:'0xf7a1…2c64', q:'New model tops the leaderboard this month?', cat:'Science', type:'Categorical', chain:'Gnosis', vol:1.1e6, liq:150e3, end:13, kind:'btns', ver:1, o:[['Lab A',.44],['Lab B',.33],['Other',.23]], tl:2},
+ {id:'0x2d68…b0f7', q:'Which L2 leads in TVL on Jan 1?', cat:'Crypto', type:'Categorical', chain:'Ethereum', vol:2.7e6, liq:330e3, end:75, kind:'rows', ver:1, o:[['Chain A',.52],['Chain B',.31]], tl:0},
+ {id:'0x6b93…e3a0', q:'Will the US enter a recession in 2027?', cat:'Business', type:'Binary', chain:'Ethereum', vol:5.6e6, liq:720e3, end:400, kind:'yesno', ver:1, o:[['Yes',.38],['No',.62]], tl:1},
+ {id:'0xa4e5…7719', q:'Film release: opening weekend gross', cat:'Pop Culture', type:'Scalar', chain:'Gnosis', vol:430e3, liq:51e3, end:9, kind:'rows', ver:0, o:[['$80–100M',.41],['$100M+',.22]], tl:3},
+ {id:'0x1f90…c5d2', q:'Oil above $90 at month end?', cat:'Business', type:'Binary', chain:'Gnosis', vol:1.9e6, liq:260e3, end:13, kind:'yesno', ver:1, o:[['Yes',.29],['No',.71]], tl:4}
+];
+M.forEach((m, i) => m.age = [4, 19, 1, 52, 80, 120, 6, 33, 90, 150, 2, 7, 15, 25, 9, 11, 3, 40, 18, 61, 26, 5][i] || 10);
+const CATS = ['All','Elections','Politics','Business','Science','Crypto','Pop Culture','Sports','DeFi','Governance','Weather'];
+const TYPES = ['All types','Binary','Categorical','Scalar','Multi-scalar','Conditional'];
+const state = {cat:'All', type:'All types', chain:'', q:'', sort:'vol'};
+
+const catEl = $('#cats');
+CATS.forEach(c => { const b = el('button', {class:'tab', role:'tab'}, c); b.setAttribute('aria-selected', c === state.cat); b.onclick = () => { state.cat = c; $$('.tab', catEl).forEach(x => x.setAttribute('aria-selected', x === b)); draw(); }; catEl.append(b); });
+const typEl = $('#types');
+TYPES.forEach(t => { const b = el('button', {}, t); b.setAttribute('aria-pressed', t === state.type); b.onclick = () => { state.type = t; $$('button', typEl).forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); }; typEl.append(b); });
+$('#q').oninput = e => { state.q = e.target.value.toLowerCase(); draw(); };
+$('#chain').onchange = e => { state.chain = e.target.value; draw(); };
+$('#sort').onchange = e => { state.sort = e.target.value; draw(); };
+
+const imgFor = m => tile(m.q.split(/[ :–]/).filter(w => /[A-Za-z]/.test(w)).slice(0, 2).map(w => w[0].toUpperCase()).join(''), m.tl);
+
+function card(m) {
+  const head = `<div class="mkt-h">${imgFor(m)}<h3>${m.q}</h3></div>`;
+  let body = '';
+  if (m.kind === 'rows') body = m.o.map((o, i) => `<div class="orow"><span class="nm">${o[0]}</span><span class="pc">${pct(o[1])}</span><span class="yn"><button class="y" data-t="${m.id}" data-o="${i}" data-s="yes">Yes</button><button class="n" data-t="${m.id}" data-o="${i}" data-s="no">No</button></span></div>`).join('');
+  if (m.kind === 'btns') body = `<div class="big2">${m.o.map((o, i) => `<button class="${i === 0 ? 'y' : i === 1 ? 'z' : 'n'}" data-t="${m.id}" data-o="${i}" data-s="yes">${o[0]}</button>`).join('')}</div><div class="orow" style="justify-content:space-between">${m.o.map(o => `<span class="muted" style="font-size:13px">${o[0]} <b class="num" style="color:var(--tx)">${pct(o[1])}</b></span>`).join('')}</div>`;
+  if (m.kind === 'updown') body = `<div style="display:grid;gap:8px"><button class="btn lg" style="width:100%" data-t="${m.id}" data-o="0" data-s="yes">Up · ${cents(m.o[0][1])}</button><button class="btn lg sec" style="width:100%" data-t="${m.id}" data-o="1" data-s="no">Down · ${cents(m.o[1][1])}</button></div>`;
+  if (m.kind === 'yesno') body = `<div class="big2" style="grid-auto-columns:1fr"><button class="y" data-t="${m.id}" data-o="0" data-s="yes" style="height:56px;text-align:left;padding:0 14px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;line-height:1.2"><small style="opacity:.8;font-weight:500">Yes</small><span class="num" style="font-size:18px">${cents(m.o[0][1])}</span></button><button class="n" data-t="${m.id}" data-o="1" data-s="no" style="height:56px;text-align:left;padding:0 14px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;line-height:1.2"><small style="opacity:.8;font-weight:500">No</small><span class="num" style="font-size:18px">${cents(m.o[1][1])}</span></button></div>`;
+  if (m.kind === 'cond') body = m.o.map((o, i) => `<div class="orow"><span class="nm">${o[0]}</span><span class="pc">${pct(o[1])}</span><span class="chip pri">${i ? 'DAO treasury, 90d' : 'DAO treasury, 90d'}</span></div>`).join('') + `<div class="meta"><span class="chip pri">Conditional</span><span>Impact <b class="num" style="color:var(--up)">+${((m.o[0][1] - m.o[1][1]) * 100).toFixed(0)}%</b> if it passes</span></div>`;
+  const end = m.end === 0 ? '<span class="live">● LIVE</span>' : '$' + short(m.vol).slice(1) + ' Vol.';
+  const foot = `<div class="mkt-f"><div class="meta">${m.end === 0 ? '<span class="live">● LIVE</span><i></i>' : ''}<span>${short(m.vol)} Vol.</span><i></i><span>${m.cat}</span><span class="right"><span class="ic-btn" title="Rewards">${I.gift}</span><span class="ic-btn" title="Save">${I.mark}</span></span></div><div class="meta" style="margin-top:8px"><span class="chip">${m.type}</span><span class="chip">${m.chain}</span>${m.ver ? '<span class="chip pri">Verified</span>' : '<span class="chip warn">Unverified</span>'}</div></div>`;
+  const a = el('article', {class: 'mkt'}, head + body + foot);
+  a.querySelector('h3').style.cursor = 'pointer';
+  a.querySelector('h3').onclick = () => openDrawer(m);
+  a.querySelector('.thumb').onclick = () => openDrawer(m);
+  return a;
+}
+
+function filtered() {
+  let l = M.filter(m => (state.cat === 'All' || m.cat === state.cat) && (state.type === 'All types' || m.type === state.type) && (!state.chain || m.chain === state.chain) && (!state.q || (m.q + m.cat + m.type).toLowerCase().includes(state.q)));
+  const s = state.sort; l.sort((a, b) => s === 'vol' ? b.vol - a.vol : s === 'liq' ? b.liq - a.liq : s === 'new' ? a.age - b.age : a.end - b.end);
+  return l;
+}
+function draw() {
+  const l = filtered(); const g = $('#grid'); g.innerHTML = '';
+  $('#count').textContent = l.length + ' market' + (l.length === 1 ? '' : 's');
+  if (!l.length) g.innerHTML = '<div class="empty" style="grid-column:1/-1">No markets match. Try another category or clear the search.</div>';
+  l.forEach(m => g.append(card(m)));
+  $$('button[data-t]', g).forEach(b => b.onclick = e => { e.stopPropagation(); const m = M.find(x => x.id === b.dataset.t), o = m.o[+b.dataset.o]; const yes = b.dataset.s === 'yes'; const p = yes ? o[1] : 1 - o[1]; slip({title: m.q, outcome: o[0], side: b.dataset.s, tag: m.kind === 'updown' ? o[0] : yes ? 'Yes' : 'No', price: Math.max(.02, Math.min(.98, p))}); });
+}
+
+/* explorer stats */
+$('#stats').innerHTML = [['24h volume', '$4.82M', '+12.4% vs yesterday'], ['Open markets', '1,284', '86 created this week'], ['Liquidity', '$31.6M', 'across 3 chains'], ['Traders (7d)', '9,417', '1,102 new']].map(([k, v, d]) => `<div class="stat"><div class="k">${k}</div><div class="v num">${v}</div><div class="d">${d}</div></div>`).join('');
+
+/* feeds */
+const r = rng(7); const hex = n => Array.from({length: n}, () => '0123456789abcdef'[Math.floor(r() * 16)]).join('');
+$('#trades').innerHTML = Array.from({length: 7}, (_, i) => { const m = M[Math.floor(r() * M.length)]; const yes = r() > .45; return `<div class="feed-row"><div><span class="addr">0x${hex(4)}…${hex(4)}</span> bought <b>${yes ? 'Yes' : 'No'}</b> on <span class="muted">${m.q.length > 44 ? m.q.slice(0, 43) + '…' : m.q}</span></div><div style="text-align:right"><b class="num">${usd(Math.round(r() * 900 + 20))}</b><div class="t">${i * 2 + 1}m ago</div></div></div>`; }).join('');
+$('#newm').innerHTML = M.slice().sort((a, b) => a.age - b.age).slice(0, 6).map(m => `<div class="feed-row" style="cursor:pointer" data-m="${m.id}"><div><b style="font-weight:500">${m.q.length > 46 ? m.q.slice(0, 45) + '…' : m.q}</b><div class="t">${m.type} · ${m.chain}</div></div><div class="t">${m.age < 24 ? m.age + 'h' : Math.round(m.age / 24) + 'd'} ago</div></div>`).join('');
+$$('#newm [data-m]').forEach(n => n.onclick = () => openDrawer(M.find(x => x.id === n.dataset.m)));
+
+/* detail drawer: the explorer view of one market */
+function openDrawer(m) {
+  const d = $('#drawer'); const base = m.o[0][1];
+  const rows = m.o.map((o, i) => `<tr class="row"><td>${o[0]}</td><td class="r">${cents(o[1])}</td><td class="r">${short(m.vol * (o[1] * .6 + .2))}</td><td class="r"><span class="yn"><button class="y" data-o="${i}" data-s="yes">Yes</button><button class="n" data-o="${i}" data-s="no">No</button></span></td></tr>`).join('');
+  d.innerHTML = `<div class="meta"><button class="btn sm ghost" id="dx">← Back to markets</button><span class="right"><span class="chip">${m.type}</span><span class="chip">${m.chain}</span></span></div>
+   <div style="display:flex;gap:14px;align-items:flex-start;margin-top:16px">${imgFor(m)}<div><h2>${m.q}</h2><div class="meta"><span>${m.cat}</span><i></i><span class="addr">${m.id}</span>${m.ver ? '<span class="chip pri">Verified by Kleros curation</span>' : '<span class="chip warn">Unverified</span>'}</div></div></div>
+   <div class="card" style="margin-top:18px;padding:18px"><div id="dchart"></div></div>
+   <div class="kv"><div><small>Volume</small><b class="num">${usd(m.vol)}</b></div><div><small>Liquidity</small><b class="num">${usd(m.liq)}</b></div><div><small>Closes</small><b>${m.end === 0 ? 'Rolling, 5 min' : 'in ' + m.end + ' days'}</b></div><div><small>Resolution</small><b>Reality.eth question, Kleros as arbitrator</b></div><div><small>Collateral</small><b>sDAI (yield-bearing)</b></div><div><small>Creator</small><b class="addr">0x${hex(4)}…${hex(4)}</b></div></div>
+   <h3 class="h3" style="margin:18px 0 6px">Outcomes</h3>
+   <table class="tbl dtbl"><thead><tr><th>Outcome</th><th class="r">Price</th><th class="r">Volume</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+   <h3 class="h3" style="margin:22px 0 6px">Recent activity</h3>
+   ${Array.from({length: 5}, (_, i) => `<div class="feed-row"><div><span class="addr">0x${hex(4)}…${hex(4)}</span> ${['bought','sold','added liquidity','bought','bought'][i]}</div><div style="text-align:right"><b class="num">${usd(Math.round(r() * 700 + 30))}</b><div class="t">${i * 3 + 2}m ago</div></div></div>`).join('')}
+   <div style="margin:18px 0 40px"><a class="btn ghost" href="deep.html">Compare in Deep ${I.right}</a></div>`;
+  $('#dx').onclick = closeDrawer;
+  $$('#drawer button[data-s]').forEach(b => b.onclick = () => { const o = m.o[+b.dataset.o], yes = b.dataset.s === 'yes'; slip({title: m.q, outcome: o[0], side: b.dataset.s, tag: yes ? 'Yes' : 'No', price: Math.max(.02, Math.min(.98, yes ? o[1] : 1 - o[1]))}); });
+  d.classList.add('open'); $('#dback').classList.add('open'); d.setAttribute('aria-hidden', 'false');
+  const s1 = walk(m.id.length * 31 + m.vol % 97, 60, base, .09, .03, .97), s2 = s1.map(v => 1 - v);
+  const series = m.o.length > 1 && m.kind !== 'rows' ? [{name: m.o[0][0], color: '#8B4EF7', data: s1, w: 2.5}, {name: m.o[1][0], color: '#4DA3FF', data: s2}] : [{name: m.o[0][0], color: '#8B4EF7', data: s1, w: 2.5}];
+  const lbl = [[0, '60d ago'], [20, '40d'], [40, '20d'], [59, 'Now']]; lbl.fmt = i => (59 - i) + 'd ago';
+  lineChart($('#dchart'), {series, xLabels: lbl, yFmt: v => Math.round(v * 100) + '%', yMin: 0, yMax: Math.min(1, Math.max(.2, Math.ceil(Math.max(...s1) * 6) / 5 / 1.2)), H: 240, ticks: 4, area: true});
+}
+function closeDrawer() { $('#drawer').classList.remove('open'); $('#dback').classList.remove('open'); $('#drawer').setAttribute('aria-hidden', 'true'); }
+$('#dback').onclick = closeDrawer; document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+draw();
+</script>
+</body>
+</html>

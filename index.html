@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seer · The protocol beneath decision markets</title>
+<meta name="description" content="Seer is the protocol beneath prediction markets, futarchy, opportunity markets and risk pricing: one base layer, five applications.">
+<link rel="icon" href="assets/mark.svg">
+<link rel="stylesheet" href="assets/ef.css">
+<style>
+.hero{position:relative;overflow:hidden;margin-top:-72px;padding:144px 0 56px}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center}
+.hero h1{margin:16px 0 22px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.hero .proof{display:flex;gap:26px;flex-wrap:wrap;margin-top:40px;color:var(--tx-3);font-size:13px}
+.hero .proof b{display:block;color:var(--tx);font-size:22px;letter-spacing:-.02em;font-weight:700}
+.stack{background:var(--card);border-radius:32px;padding:20px;display:grid;gap:10px;position:relative;box-shadow:var(--shadow)}
+.layer{border-radius:20px;padding:16px 18px;background:var(--nest);position:relative}
+.layer small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx-3);font-weight:600;margin-bottom:10px}
+.layer .chips{display:flex;gap:8px;flex-wrap:wrap}
+.layer .chips a{height:34px;padding:0 14px;border-radius:11px;background:var(--card);display:inline-flex;align-items:center;font-weight:600;font-size:14px;transition:background .15s,color .15s}
+.layer .chips a:hover{background:var(--pri);color:#fff}
+.layer.core{background:var(--pri);color:#fff;padding:22px 20px;display:flex;align-items:center;gap:18px}
+.layer.core .logo.mark{height:54px;color:#fff;flex:none}
+.layer.core small{color:rgba(255,255,255,.72);margin-bottom:4px}
+.layer.core b{font-size:22px;letter-spacing:-.02em;line-height:1.15;display:block}
+.layer.core .parts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.layer.core .parts span{height:26px;padding:0 10px;border-radius:99px;background:rgba(255,255,255,.16);font-size:12.5px;font-weight:500;display:inline-flex;align-items:center}
+.links{position:absolute;left:50%;transform:translateX(-50%);width:2px;background:repeating-linear-gradient(var(--pri-hi) 0 6px,transparent 6px 12px)}
+.pulse{animation:flow 1.8s linear infinite}
+@keyframes flow{to{background-position:0 12px}}
+.sect-h .lead{margin-top:10px;max-width:56ch}
+.cards5{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.prod{min-width:0;grid-column:span 2;background:var(--card);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;gap:14px;transition:transform .2s,box-shadow .2s;position:relative}
+.prod:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.prod.wide{grid-column:span 3}
+.prod h3{font-size:22px;letter-spacing:-.025em;font-weight:700;display:flex;align-items:center;gap:10px}
+.prod p{color:var(--tx-2);font-size:15px}
+.prod .pv{margin-top:auto;background:var(--nest);border-radius:16px;padding:14px;min-height:130px;display:grid;gap:8px;align-content:center}
+.prod .go{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--sec-tx);font-size:14px;margin-top:2px}
+.prod .go svg{width:16px;height:16px;transition:transform .15s}
+.prod:hover .go svg{transform:translateX(3px)}
+.prod .tagrow{display:flex;gap:6px;flex-wrap:wrap}
+.mini{display:flex;align-items:center;gap:8px;font-size:13px}
+.mini .nm{flex:1;color:var(--tx-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .bar{flex:1.3;height:8px}
+.mini b{min-width:34px;text-align:right}
+.mini .yn button{height:26px;min-width:34px;padding:0 8px;font-size:12px;border-radius:8px;pointer-events:none}
+.pv-lines{width:100%;height:92px}
+.pv-pf{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pv-pf>div{border-radius:12px;padding:10px 12px;background:var(--card)}
+.pv-pf small{display:block;font-size:11px;color:var(--tx-3);margin-bottom:2px;font-weight:600;letter-spacing:.04em}
+.pv-pf b{font-size:20px;letter-spacing:-.02em}
+.pv-heat{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.pv-heat i{height:26px;border-radius:7px;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:700}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;counter-reset:f;position:relative}
+.fstep{background:var(--card);border-radius:var(--r-lg);padding:22px;position:relative}
+.fstep .n{width:34px;height:34px;border-radius:11px;background:var(--sec);color:var(--sec-tx);font-weight:700;display:grid;place-items:center;margin-bottom:16px}
+.fstep h4{font-size:18px;letter-spacing:-.015em;margin-bottom:6px}
+.fstep p{color:var(--tx-2);font-size:14.5px}
+.fstep .ex{margin-top:14px;padding:10px 12px;border-radius:12px;background:var(--nest);font-size:13px;color:var(--tx-2)}
+.fstep .ex b{color:var(--tx);font-weight:600}
+.stats4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.build{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+.code{background:var(--nest);border-radius:16px;padding:18px;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx-2);overflow:auto;white-space:pre}
+.code .k{color:var(--sec-tx)}.code .s{color:var(--up)}.code .c{color:var(--tx-3)}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.feat div{background:var(--nest);border-radius:16px;padding:16px}
+.feat b{display:block;margin-bottom:4px;font-weight:600}
+.feat span{color:var(--tx-2);font-size:14px}
+.cta-b{background:var(--pri);color:#fff;border-radius:32px;padding:56px 40px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;position:relative;overflow:hidden}
+.cta-b .logo.mark{position:absolute;right:-30px;top:-40px;height:300px;color:rgba(255,255,255,.09)}
+.cta-b h2{font-size:clamp(28px,3.6vw,44px);letter-spacing:-.035em;line-height:1.05;max-width:18ch;font-weight:700}
+.cta-b .btn{background:#fff;color:#1A1A1E}
+.cta-b .btn.sec{background:rgba(255,255,255,.18);color:#fff}
+@media (max-width:1100px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.cards5{grid-template-columns:repeat(2,minmax(0,1fr))}.prod,.prod.wide{grid-column:span 1}.flow,.stats4{grid-template-columns:repeat(2,minmax(0,1fr))}.build{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.hero{padding:44px 0 36px}.cards5,.flow,.stats4,.feat{grid-template-columns:minmax(0,1fr)}.cta-b{padding:36px 24px}}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="bloom"></div>
+    <div class="wrap">
+      <div>
+        <div class="eyebrow">The protocol beneath decision markets</div>
+        <h1 class="h-display">One protocol.<br><span class="accent">Five ways to see.</span></h1>
+        <p class="lead">Seer turns what many people believe into prices anyone can read. Trade a question, compare a field, inform a vote, back an idea, price a risk. Five applications on one base layer, onchain.</p>
+        <div class="cta"><a class="btn lg" href="app.html">Launch app</a><a class="btn lg ghost" href="#ecosystem">How it fits together</a></div>
+        <div class="proof"><div><b class="num">$48M</b>volume settled</div><div><b class="num">12K+</b>markets created</div><div><b class="num">3</b>chains</div><div><b class="num">100%</b>onchain</div></div>
+      </div>
+      <div class="stack" aria-label="Seer architecture">
+        <div class="layer"><small>Applications</small><div class="chips"><a href="app.html">App</a><a href="deep.html">Deep</a><a href="futarchy.html">Futarchy</a><a href="opportunity.html">Opportunity Markets</a><a href="risk.html">Risk Pricing</a></div></div>
+        <div class="layer core" id="protocol"><span class="logo mark"><i></i></span><div><small>The protocol</small><b>Seer</b><div class="parts"><span>Conditional tokens</span><span>Market factory</span><span>Curated resolution</span></div></div></div>
+        <div class="layer"><small>Settles on</small><div class="chips"><a href="app.html">Gnosis</a><a href="app.html">Ethereum</a><a href="deep.html">Optimism</a></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect" id="ecosystem" style="padding-top:40px">
+    <div class="wrap">
+      <div class="sect-h"><div><div class="eyebrow">The ecosystem</div><h2 class="h2">Pick the question. Pick the lens.</h2><p class="lead">Every application reads and writes the same markets, so a signal found in one is usable in all the others.</p></div></div>
+      <div class="cards5" id="cards"></div>
+    </div>
+  </section>
+
+  <section class="sect" style="padding-top:20px">
+    <div class="wrap">
+      <div class="sect-h"><div><div class="eyebrow">One lifecycle</div><h2 class="h2">From a question to a signal.</h2></div></div>
+      <div class="flow">
+        <div class="fstep"><div class="n">1</div><h4>Ask</h4><p>Anyone creates a market from a question, a set of outcomes and a way to resolve it.</p><div class="ex"><b>Example</b> · “Which grants get funded?”</div></div>
+        <div class="fstep"><div class="n">2</div><h4>Trade</h4><p>People and agents buy the outcomes they believe in. Prices move to the crowd’s estimate.</p><div class="ex"><b>Example</b> · 48 outcomes, one market</div></div>
+        <div class="fstep"><div class="n">3</div><h4>Use the signal</h4><p>A team, a DAO or an investor reads the prices. Seer informs the decision. It never takes it.</p><div class="ex"><b>Example</b> · the committee shortlists</div></div>
+        <div class="fstep"><div class="n">4</div><h4>Resolve</h4><p>Curated resolution settles the market and pays the shares that were right.</p><div class="ex"><b>Example</b> · winners paid at $1</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect" style="padding-top:20px">
+    <div class="wrap">
+      <div class="stats4" id="stats"></div>
+    </div>
+  </section>
+
+  <section class="sect" style="padding-top:20px">
+    <div class="wrap build">
+      <div class="card" style="padding:28px">
+        <div class="eyebrow" style="margin-bottom:12px">For builders</div>
+        <h2 class="h2">The base layer is open.</h2>
+        <p class="muted" style="margin-top:12px;max-width:52ch">Markets are built on conditional tokens, wrapped as ERC-20s so any wallet and any DEX can hold them. Anyone can create a market. Resolution is curated through Kleros.</p>
+        <div class="feat"><div><b>Permissionless</b><span>Create a market for any question with a resolution source.</span></div><div><b>Composable</b><span>Outcome tokens are plain ERC-20s.</span></div><div><b>Agent-ready</b><span>Quote and batch-order endpoints for programmatic traders.</span></div><div><b>Curated</b><span>Verified markets are flagged in every interface.</span></div></div>
+        <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><a class="btn ghost" href="https://seer-3.gitbook.io/seer-documentation" rel="noopener">Documentation</a><a class="btn ghost" href="https://github.com/seer-pm" rel="noopener">GitHub</a></div>
+      </div>
+      <div class="code" tabindex="0"><span class="c">// create a many-outcome market, then read its prices</span>
+<span class="k">const</span> market = <span class="k">await</span> seer.markets.create({
+  question: <span class="s">"Which proposals will reviewers score highest?"</span>,
+  type:     <span class="s">"multi-scalar"</span>,
+  outcomes: proposals.map(p =&gt; p.id),
+  collateral: <span class="s">"sDAI"</span>,
+  resolution: { source: <span class="s">"reality.eth"</span>, curated: <span class="k">true</span> },
+});
+
+<span class="k">const</span> prices = <span class="k">await</span> market.prices();
+<span class="c">// prices sum to 1. Read them as a ranked signal.</span>
+
+<span class="c">// an agent trades the same market in one batch</span>
+<span class="k">await</span> market.trade([
+  { outcome: <span class="s">"lantern-rpc"</span>, side: <span class="s">"up"</span>,   size: <span class="s">250</span> },
+  { outcome: <span class="s">"tessera"</span>,     side: <span class="s">"down"</span>, size: <span class="s">120</span> },
+]);</div>
+    </div>
+  </section>
+
+  <section class="sect" style="padding-top:10px">
+    <div class="wrap">
+      <div class="cta-b"><span class="logo mark"><i></i></span><h2>Start with a question.</h2><div style="display:flex;gap:10px;flex-wrap:wrap;position:relative"><a class="btn lg" href="app.html">Launch app</a><a class="btn lg sec" href="deep.html">Explore Deep</a></div></div>
+    </div>
+  </section>
+</main>
+<script src="assets/ef.js"></script>
+<script>
+EF.shell('home');
+const {$, $$, I, walk, spark, PAL} = EF;
+const heatc = v => { const t = Math.min(1, Math.sqrt(v / .6)); const st = [[48, 48, 56], [125, 51, 255], [245, 182, 58], [255, 77, 94]]; const x = t * 3, i = Math.min(2, Math.floor(x)), f = x - i; return st[i].map((s, j) => Math.round(s + (st[i + 1][j] - s) * f)); };
+const lines = () => { const w = 280, h = 92, col = PAL; return `<svg class="pv-lines" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${[0, 1, 2, 3, 4, 5].map(k => { const d = walk(30 + k * 7, 28, .25 + k * .11, .08, .05, .95, .05); return `<path d="${d.map((v, i) => (i ? 'L' : 'M') + (i / 27 * w).toFixed(1) + ' ' + (h - v * h).toFixed(1)).join('')}" fill="none" stroke="${col[k]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity=".9"/>`; }).join('')}</svg>`; };
+const P = [
+  {href: 'app.html', t: 'App', d: 'The explorer for every Seer market. Find any question, any type, and trade it.', tags: ['Binary', 'Categorical', 'Scalar'], pv: () => `<div class="mini"><span class="nm">Fed decision in July?</span><b>95%</b><span class="yn"><button class="y">Yes</button><button class="n">No</button></span></div><div class="mini"><span class="nm">Clarity Act signed in 2026?</span><b>69%</b><span class="yn"><button class="y">Yes</button><button class="n">No</button></span></div><div class="mini"><span class="nm">ETH above $3,000 on Dec 31?</span><b>31%</b><span class="yn"><button class="y">Yes</button><button class="n">No</button></span></div>`},
+  {href: 'deep.html', t: 'Deep', d: 'Questions with many outcomes, built for AI agents and people to trade side by side.', tags: ['48 outcomes', 'Agents'], pv: lines},
+  {href: 'futarchy.html', t: 'Futarchy', d: 'Forecast a measure of success if a proposal passes and if it does not. The DAO decides.', tags: ['Conditional', 'DAOs'], pv: () => `<div class="pv-pf"><div><small>IF IT PASSES</small><b class="num accent">$412M</b></div><div><small>IF IT FAILS</small><b class="num">$361M</b></div></div><div class="mini"><span class="nm">Difference</span><b class="num" style="color:var(--up);min-width:60px">+14.1%</b></div>`},
+  {href: 'opportunity.html', t: 'Opportunity Markets', d: 'Traders forecast which submissions get selected. Reviewers get a signal and keep the final say.', tags: ['Selection', 'Credits'], wide: 1, pv: () => [['Tessera Wallet', 22], ['Vesper Relay', 15], ['Lantern RPC', 11], ['Fathom Ledger', 8]].map(([n, v]) => `<div class="mini"><span class="nm">${n}</span><div class="bar"><i style="width:${v * 4}%"></i></div><b>${v}¢</b></div>`).join('')},
+  {href: 'risk.html', t: 'Risk Pricing', d: 'Market estimates of risk across protocols, from a scare to a total loss, side by side.', tags: ['DeFi', 'Severity ladder'], wide: 1, pv: () => [[.34, .2, .11, .058, .026], [.12, .075, .036, .02, .011], [.044, .026, .013, .007, .003]].map(r => `<div class="pv-heat">${r.map(v => { const c = heatc(v); return `<i style="background:rgb(${c});color:${v < .05 ? 'var(--tx-3)' : (c[0] * 299 + c[1] * 587 + c[2] * 114) / 1000 > 150 ? '#1A1A1E' : '#fff'}">${(v * 100).toFixed(v < .1 ? 1 : 0)}%</i>`; }).join('')}</div>`).join('')}
+];
+$('#cards').innerHTML = P.map(p => `<a class="prod ${p.wide ? 'wide' : ''}" href="${p.href}"><h3>${p.t}</h3><p>${p.d}</p><div class="tagrow">${p.tags.map(t => `<span class="chip">${t}</span>`).join('')}</div><div class="pv">${p.pv()}</div><span class="go">Open ${p.t} ${I.right}</span></a>`).join('');
+$('#stats').innerHTML = [['Volume settled', '$48.2M', 'since launch'], ['Markets created', '12,340', 'across all types'], ['Active traders', '9,417', 'last 7 days'], ['Agents trading', '312', 'via batch endpoints']].map(([k, v, d]) => `<div class="stat"><div class="k">${k}</div><div class="v num">${v}</div><div class="d">${d}</div></div>`).join('');
+</script>
+</body>
+</html>
